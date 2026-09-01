@@ -58,6 +58,28 @@ case "$(uname -m)" in
   *) echo "不支持的架构: $(uname -m)" >&2; exit 1 ;;
 esac
 
+network_name=""
+for network_id in $(docker network ls -q); do
+  network_driver="$(docker network inspect "$network_id" --format '{{.Driver}}')"
+  network_subnet="$(docker network inspect "$network_id" --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}')"
+  network_gateway="$(docker network inspect "$network_id" --format '{{range .IPAM.Config}}{{.Gateway}}{{end}}')"
+  network_parent="$(docker network inspect "$network_id" --format '{{index .Options "parent"}}')"
+  if [ "$network_driver" = "macvlan" ] && [ "$network_subnet" = "$subnet" ] && [ "$network_gateway" = "$gateway" ] && [ "$network_parent" = "$parent" ]; then
+    network_name="$(docker network inspect "$network_id" --format '{{.Name}}')"
+    break
+  fi
+done
+if [ -z "$network_name" ]; then
+  network_name="${CMSINGBOX_DOCKER_NETWORK:-cmsingbox_lan}"
+  if docker network inspect "$network_name" >/dev/null 2>&1; then
+    echo "Docker 网络 ${network_name} 已存在但参数不兼容，请通过 CMSINGBOX_DOCKER_NETWORK 指定新名称。" >&2
+    exit 1
+  fi
+  docker network create --driver macvlan --subnet "$subnet" --gateway "$gateway" --opt "parent=${parent}" "$network_name" >/dev/null
+else
+  echo "复用已有 macvlan 网络: ${network_name}"
+fi
+
 mkdir -p "$install_dir/data"
 curl -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$install_dir/cmsingbox"
 curl -fsSL "${repository_raw}/deploy/Dockerfile" -o "$install_dir/Dockerfile"
@@ -71,6 +93,7 @@ umask 077
   printf 'CMSINGBOX_PARENT=%s\n' "$parent"
   printf 'CMSINGBOX_SUBNET=%s\n' "$subnet"
   printf 'CMSINGBOX_GATEWAY=%s\n' "$gateway"
+  printf 'CMSINGBOX_DOCKER_NETWORK=%s\n' "$network_name"
   printf 'CMSINGBOX_LICENSE_PUBLIC_KEY=%s\n' "$license_public_key"
 } > "$install_dir/.env"
 

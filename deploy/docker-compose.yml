@@ -16,10 +16,5 @@ services:
 
 networks:
   cmsingbox_lan:
-    driver: macvlan
-    driver_opts:
-      parent: ${CMSINGBOX_PARENT:?请设置 CMSINGBOX_PARENT}
-    ipam:
-      config:
-        - subnet: ${CMSINGBOX_SUBNET:?请设置 CMSINGBOX_SUBNET}
-          gateway: ${CMSINGBOX_GATEWAY:?请设置 CMSINGBOX_GATEWAY}
+    external: true
+    name: ${CMSINGBOX_DOCKER_NETWORK:?请设置 CMSINGBOX_DOCKER_NETWORK}
