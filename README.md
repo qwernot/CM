@@ -2,7 +2,7 @@
 
 本仓库只保存 CMSingBox 的中文部署文档、一键安装脚本、公开运行二进制和容器构建文件，不包含授权私钥。
 
-部署包已内置 sing-box 1.13.21 基础内核，安装完成即可使用；以后仍可在后台下载并替换内核。第三方内核的来源、许可证和校验信息见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+部署包已内置 sing-box 1.13.21 稳定基础内核，安装完成即可使用；后台还提供 1.14.0 最新版供手动切换。第三方内核的来源、许可证和校验信息见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 在线文档
 
