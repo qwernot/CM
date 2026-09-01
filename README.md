@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install.sh |
 curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-docker.sh | sudo env CMSINGBOX_IP=192.168.1.20 sh
 ```
 
-把 `192.168.1.20` 换成实际地址。脚本会自动识别默认网卡、网关和局域网网段，并使用 macvlan 给容器分配独立 IP。
+把 `192.168.1.20` 换成实际地址。脚本会自动识别默认网卡和局域网网段，macvlan 网关默认为 `192.168.1.1`，并给容器分配独立 IP；其他网关可通过 `CMSINGBOX_GATEWAY` 覆盖。
 
 ## 目录
 

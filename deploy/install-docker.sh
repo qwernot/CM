@@ -31,7 +31,7 @@ if ! docker compose version >/dev/null 2>&1; then
 fi
 
 parent="${CMSINGBOX_PARENT:-$(ip -4 route show default | awk 'NR==1 {for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')}"
-gateway="${CMSINGBOX_GATEWAY:-$(ip -4 route show default | awk 'NR==1 {for(i=1;i<=NF;i++) if($i=="via"){print $(i+1); exit}}')}"
+gateway="${CMSINGBOX_GATEWAY:-192.168.1.1}"
 subnet="${CMSINGBOX_SUBNET:-$(ip -4 route show dev "$parent" scope link | awk '$1 ~ /^[0-9]+\./ && $1 ~ /\// {print $1; exit}')}"
 
 if [ -z "$parent" ] || [ -z "$gateway" ] || [ -z "$subnet" ]; then
