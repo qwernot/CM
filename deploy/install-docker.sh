@@ -64,8 +64,12 @@ for network_id in $(docker network ls -q); do
   network_subnet="$(docker network inspect "$network_id" --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}')"
   network_gateway="$(docker network inspect "$network_id" --format '{{range .IPAM.Config}}{{.Gateway}}{{end}}')"
   network_parent="$(docker network inspect "$network_id" --format '{{index .Options "parent"}}')"
-  if [ "$network_driver" = "macvlan" ] && [ "$network_subnet" = "$subnet" ] && [ "$network_gateway" = "$gateway" ] && [ "$network_parent" = "$parent" ]; then
+  if [ "$network_driver" = "macvlan" ] && [ "$network_subnet" = "$subnet" ] && [ "$network_parent" = "$parent" ]; then
     network_name="$(docker network inspect "$network_id" --format '{{.Name}}')"
+    if [ -n "$network_gateway" ] && [ "$network_gateway" != "$gateway" ]; then
+      echo "已有 macvlan 网络 ${network_name} 的网关为 ${network_gateway}，将按该网络配置复用。"
+      gateway="$network_gateway"
+    fi
     break
   fi
 done
