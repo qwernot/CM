@@ -29,16 +29,23 @@ case "$(uname -m)" in
 esac
 
 temporary_binary="$(mktemp /tmp/cmsingbox.XXXXXX)"
-trap 'rm -f "$temporary_binary"' EXIT HUP INT TERM
+temporary_kernel="$(mktemp /tmp/cmsingbox-kernel.XXXXXX)"
+trap 'rm -f "$temporary_binary" "$temporary_kernel"' EXIT HUP INT TERM
 echo "正在下载 CMSingBox 原生程序..."
-curl -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$temporary_binary"
+curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$temporary_binary"
 chmod 0755 "$temporary_binary"
 
 mkdir -p "$install_dir" "$data_dir"
 systemctl stop cmsingbox.service 2>/dev/null || true
 install -m 0755 "$temporary_binary" "$install_dir/cmsingbox"
+if [ ! -x "$data_dir/bin/sing-box" ]; then
+  echo "正在安装内置 sing-box 基础内核..."
+  curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/bin/sing-box-linux-${architecture}" -o "$temporary_kernel"
+  mkdir -p "$data_dir/bin"
+  install -m 0755 "$temporary_kernel" "$data_dir/bin/sing-box"
+fi
 
-license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-tmySfFXNcgxWTfs5MLotrluSbEza8oDx9tSBkXoA4Dw=}"
+license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}"
 umask 077
 {
   printf 'CMSINGBOX_LICENSE_PUBLIC_KEY=%s\n' "$license_public_key"

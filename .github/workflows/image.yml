@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "bin/cmsingbox-linux-*"
+      - "bin/sing-box-linux-*"
       - "Dockerfile.image"
       - ".github/workflows/image.yml"
   workflow_dispatch:

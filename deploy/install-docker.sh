@@ -85,12 +85,13 @@ else
 fi
 
 mkdir -p "$install_dir/data"
-curl -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$install_dir/cmsingbox"
-curl -fsSL "${repository_raw}/deploy/Dockerfile" -o "$install_dir/Dockerfile"
-curl -fsSL "${repository_raw}/deploy/docker-compose.yml" -o "$install_dir/docker-compose.yml"
-chmod 0755 "$install_dir/cmsingbox"
+curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$install_dir/cmsingbox"
+curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/bin/sing-box-linux-${architecture}" -o "$install_dir/sing-box"
+curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/deploy/Dockerfile" -o "$install_dir/Dockerfile"
+curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/deploy/docker-compose.yml" -o "$install_dir/docker-compose.yml"
+chmod 0755 "$install_dir/cmsingbox" "$install_dir/sing-box"
 
-license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-tmySfFXNcgxWTfs5MLotrluSbEza8oDx9tSBkXoA4Dw=}"
+license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}"
 umask 077
 {
   printf 'CMSINGBOX_IP=%s\n' "$container_ip"
