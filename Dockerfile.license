@@ -1,0 +1,8 @@
+FROM alpine:3.22
+USER root
+COPY cmsingbox-license-server /usr/local/bin/cmsingbox-license-server
+COPY cmsingbox-license-tool /usr/local/bin/cmsingbox-license-tool
+VOLUME ["/license"]
+EXPOSE 9093/tcp
+ENTRYPOINT ["/usr/local/bin/cmsingbox-license-server", "-listen", "0.0.0.0:9093", "-private-key", "/license/private.key", "-audit", "/license/license-audit.jsonl"]
+

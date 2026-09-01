@@ -1,0 +1,39 @@
+name: 发布多架构容器镜像
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bin/cmsingbox-linux-*"
+      - "Dockerfile.image"
+      - ".github/workflows/image.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.image
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: ghcr.io/qwernot/cmsingbox:latest
+          labels: org.opencontainers.image.source=https://github.com/qwernot/CM
+      - name: 将容器包设为公开
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api --method PATCH /user/packages/container/cmsingbox -f visibility=public || true

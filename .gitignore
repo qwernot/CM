@@ -1,0 +1,7 @@
+.env
+data/
+license-data/
+cmsingbox
+cmsingbox-license-server
+cmsingbox-license-tool
+
