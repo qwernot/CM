@@ -1,0 +1,10 @@
+const body=document.body;
+const setTheme=dark=>{body.classList.toggle('dark',dark);localStorage.setItem('cm-theme',dark?'dark':'light')};
+setTheme(localStorage.getItem('cm-theme')!=='light');
+document.getElementById('theme').onclick=()=>setTheme(!body.classList.contains('dark'));
+const mobile=document.getElementById('mobile'),overlay=document.getElementById('overlay');
+const menuOpen=open=>{mobile.classList.toggle('open',open);overlay.classList.toggle('open',open)};
+document.getElementById('menu').onclick=()=>menuOpen(true);
+document.getElementById('close').onclick=()=>menuOpen(false);
+overlay.onclick=()=>menuOpen(false);
+document.querySelectorAll('.copy').forEach(button=>button.onclick=async()=>{await navigator.clipboard.writeText(button.nextElementSibling.innerText);button.textContent='已复制';setTimeout(()=>button.textContent='复制',1200)});

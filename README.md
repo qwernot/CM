@@ -6,22 +6,31 @@
 
 [https://qwernot.github.io/CM/](https://qwernot.github.io/CM/)
 
-## Docker 一键部署
+## 原生一键部署
+
+适用于使用 systemd 的 Linux 服务器、小主机和虚拟机，不使用 Docker：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install.sh | sudo sh
+```
+
+默认使用宿主机 IP，后台端口为 9092。原生部署会直接使用宿主机端口；如果 53、2080 或 9092 已被占用，请在后台修改对应端口，后台端口也可通过 `CMSINGBOX_PORT` 在安装时指定。
+
+## Docker 独立 IP 部署
 
 准备一个与 Docker 宿主机同网段、位于 DHCP 自动分配范围之外的空闲 IP：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/install.sh | sudo env CMSINGBOX_IP=192.168.1.20 sh
+curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-docker.sh | sudo env CMSINGBOX_IP=192.168.1.20 sh
 ```
 
 把 `192.168.1.20` 换成实际地址。脚本会自动识别默认网卡、网关和局域网网段，并使用 macvlan 给容器分配独立 IP。
 
-## 授权中心
+## 目录
 
-授权中心只由授权管理员部署，普通用户不要执行：
+- `docs/user`：普通用户功能与排障文档
+- `docs/deploy`：原生、Docker 与 RouterOS 部署教程
+- `deploy`：普通主程序安装脚本与 Docker 配置
+- `bin`：普通主程序多架构二进制
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/install-license.sh | sudo env CMSINGBOX_LICENSE_PASSWORD='Aa666333' sh
-```
-
-完整说明见在线文档。
+管理员授权端、授权文档和完整项目源代码不在本公开仓库中。
