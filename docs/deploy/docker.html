@@ -1,74 +1,13 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="CMSingBox Docker Compose 多架构镜像部署教程">
-  <title>Docker Compose 部署 | CMSingBox</title>
-  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../assets/style.css">
-</head>
-<body>
-<header class="topbar"><div class="topinner"><button class="icon-btn menu-btn" id="menu">☰</button><a class="logo" href="../index.html"><img src="../assets/favicon.svg" alt=""><span>CMSingBox <i>Docs</i></span></a><nav class="topnav"><a href="../index.html">首页</a><a class="active" href="docker.html">部署指南</a><a href="https://github.com/qwernot/CM">GitHub ↗</a><button class="icon-btn" id="theme">◐</button></nav></div></header>
-<aside class="sidebar"><p class="side-title">开始使用</p><a class="side-link" href="../index.html">文档首页</a><a class="side-link" href="native.html">Linux 原生部署</a><a class="side-link active" href="docker.html">Docker Compose</a><a class="side-link" href="routeros.html">RouterOS 容器</a><p class="side-title">功能教程</p><a class="side-link" href="../user/guide.html">功能使用</a><a class="side-link" href="../user/faq.html">常见问题</a></aside>
-<div class="overlay" id="overlay"></div><aside class="mobile-side" id="mobile"><div class="mobile-head">文档目录 <button class="icon-btn" id="close">✕</button></div><a class="side-link" href="../index.html">文档首页</a><a class="side-link" href="native.html">Linux 原生部署</a><a class="side-link active" href="docker.html">Docker Compose</a><a class="side-link" href="routeros.html">RouterOS 容器</a><a class="side-link" href="../user/guide.html">功能使用</a><a class="side-link" href="../user/faq.html">常见问题</a></aside>
-<main class="main">
-  <section class="hero"><div class="hero-inner"><span class="badge">Docker Hub 多架构镜像</span><h1>Docker Compose 独立 IP 部署</h1><p>容器同时连接出口网络与 macvlan 局域网，为 CMSingBox 分配独立 IP。53、2080、9090、9092 均不占用宿主机端口。</p><a class="primary" href="#quick">一键部署 →</a></div></section>
-  <article class="content">
-    <section class="doc-section"><p class="eyebrow">镜像说明</p><h2>自动匹配设备架构</h2><p>公开镜像为 <code>darkver8/cmsingbox:latest</code>，支持以下平台。Docker 会根据设备自动拉取对应版本，无需手动选择架构。</p><div class="table-wrap"><table><thead><tr><th>平台</th><th>常见设备</th></tr></thead><tbody><tr><td>linux/amd64</td><td>Intel / AMD 服务器、NAS、小主机</td></tr><tr><td>linux/arm64</td><td>64 位 ARM 软路由、树莓派、NAS</td></tr><tr><td>linux/arm/v7</td><td>32 位 ARMv7 设备</td></tr></tbody></table></div><div class="callout"><strong>基础内核已集成：</strong>镜像首次启动会自动把随镜像提供的 Sing-box 内核写入数据目录，可直接工作；后续仍可在后台按需更新内核。</div></section>
-    <section id="quick" class="doc-section"><p class="eyebrow">方式一 · 推荐</p><h2>一键部署</h2><ol><li>安装 Docker Engine 与 Docker Compose 插件。</li><li>从路由器 DHCP 地址池外选择一个空闲 IP，例如 <code>192.168.1.20</code>。</li><li>执行下面命令，把 IP 替换成你的实际地址。</li></ol><div class="code"><button class="copy">复制</button><pre><code>curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-docker.sh | sudo env CMSINGBOX_IP=192.168.1.20 sh</code></pre></div><p>脚本会识别默认网卡与网段，默认网关使用 <code>192.168.1.1</code>，创建 macvlan 网络、拉取多架构镜像并启动容器。</p><p>多网卡或非默认网段请显式指定：</p><div class="code"><button class="copy">复制</button><pre><code>curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-docker.sh | sudo env \
-  CMSINGBOX_IP=192.168.1.20 \
-  CMSINGBOX_PARENT=eth0 \
-  CMSINGBOX_SUBNET=192.168.1.0/24 \
-  CMSINGBOX_GATEWAY=192.168.1.1 sh</code></pre></div></section>
-    <section class="doc-section"><p class="eyebrow">方式二 · 手动</p><h2>Docker Compose 部署</h2><p>先确认物理网卡名称、局域网网段及待分配 IP：</p><div class="code"><button class="copy">复制</button><pre><code>ip -4 route
-ip -br link
-ping -c 1 192.168.1.20</code></pre></div><p>创建 macvlan 网络。下面以 <code>eth0</code>、<code>192.168.1.0/24</code> 为例：</p><div class="code"><button class="copy">复制</button><pre><code>docker network create -d macvlan \
-  --subnet=192.168.1.0/24 \
-  --gateway=192.168.1.1 \
-  -o parent=eth0 cmsingbox_lan</code></pre></div><p>创建空目录，在其中保存下面的 <code>compose.yml</code>：</p><div class="code"><button class="copy">复制</button><pre><code>services:
-  cmsingbox:
-    image: darkver8/cmsingbox:latest
-    container_name: cmsingbox
-    restart: unless-stopped
-    privileged: true
-    environment:
-      TZ: Asia/Shanghai
-    volumes:
-      - ./data:/data
-    networks:
-      egress:
-        gw_priority: 1
-      lan:
-        ipv4_address: 192.168.1.20
-
-networks:
-  egress:
-    driver: bridge
-  lan:
-    external: true
-    name: cmsingbox_lan</code></pre></div><p>拉取并启动：</p><div class="code"><button class="copy">复制</button><pre><code>docker compose pull
-docker compose up -d
-docker compose ps
-docker compose logs --tail=100 cmsingbox</code></pre></div><div class="callout warn"><strong>为什么要两个网络：</strong><code>lan</code> 提供独立局域网 IP，<code>egress</code> 提供默认互联网出口。缺少出口网络时，容器内可能无法下载订阅或更新内核。</div></section>
-    <section class="doc-section"><p class="eyebrow">首次使用</p><h2>登录并启动服务</h2><ol><li>浏览器打开 <code>http://192.168.1.20:9092</code>。</li><li>初始账号和密码均为 <code>admin</code>，登录后建议立即修改。</li><li>添加订阅并执行更新，然后进入“服务管理”启动 Sing-box。</li><li>代理控制台使用 <code>http://192.168.1.20:9090/ui/</code>；HTTP/SOCKS5 混合代理地址为 <code>192.168.1.20:2080</code>。</li></ol></section>
-    <section class="doc-section"><p class="eyebrow">DNS</p><h2>DNS 默认关闭，按需开启</h2><ol><li>进入后台“系统设置”。</li><li>找到“DNS 配置”，开启“独立 DNS 分流服务”。</li><li>监听 IP 保持 <code>0.0.0.0</code>，监听端口保持 <code>53</code>。</li><li>点击页面顶部“保存设置”，再重启 Sing-box 服务。</li><li>把路由器或客户端 DNS 设置为容器独立 IP，例如 <code>192.168.1.20</code>。</li></ol><div class="callout warn">如果 53 端口无法启动，先检查该容器 IP 上是否已有 DNS 服务。macvlan 独立 IP 不会与宿主机的 53 端口冲突。</div></section>
-    <section class="doc-section"><p class="eyebrow">维护</p><h2>更新、日志与备份</h2><div class="code"><button class="copy">复制</button><pre><code>cd /opt/cmsingbox-docker
-
-# 更新到最新镜像
-docker compose pull
-docker compose up -d
-
-# 查看状态和日志
-docker compose ps
-docker compose logs -f --tail=100
-
-# 停止但保留数据
-docker compose down</code></pre></div><p>一键脚本的持久数据保存在 <code>/opt/cmsingbox-docker/data</code>。升级前备份此目录；不要使用 <code>docker compose down -v</code>。</p></section>
-    <section class="doc-section"><p class="eyebrow">网络提示</p><h2>宿主机可能无法直接访问容器</h2><p>这是 macvlan 的默认隔离行为，不代表 CMSingBox 故障。同一局域网中的手机、电脑和路由器通常可以直接访问容器 IP。部分无线网卡、云服务器或禁止多 MAC 地址的网络不支持 macvlan，此时请改用 Linux 原生部署。</p></section>
-  </article>
-  <footer class="footer">CMSingBox · 中文部署文档 · <a class="repo" href="https://github.com/qwernot/CM">GitHub</a></footer>
-</main>
-<script src="../assets/app.js"></script>
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Docker Compose 部署 | CMSingBox</title><link rel="icon" href="../assets/favicon.svg"><link rel="stylesheet" href="../assets/style.css"></head><body data-root="../">
+<header class="topbar"><div class="topinner"><button class="icon-btn menu-btn" id="menu">☰</button><a class="logo" href="../index.html"><img src="../assets/favicon.svg" alt=""><span>CMSingBox <i>Docs</i></span></a><button class="search-trigger" id="search">⌕ <span>搜索文档</span><kbd>Ctrl K</kbd></button><nav class="topnav"><a href="../index.html">首页</a><a class="active" href="../guide.html">指南</a><a href="routeros.html">RouterOS</a><a href="../user/faq.html">常见问题</a><a href="https://github.com/qwernot/CM">GitHub ↗</a><button class="icon-btn" id="theme">☀</button></nav></div></header>
+<aside class="sidebar"><div class="side-group"><p class="side-title">开始使用</p><a class="side-link" href="../guide.html">快速开始</a><a class="side-link" href="native.html">Linux 原生部署</a><a class="side-link active" href="docker.html">Docker Compose</a></div><div class="side-group"><p class="side-title">功能教程</p><a class="side-link" href="../user/guide.html">功能使用</a><a class="side-link" href="../user/routing.html">分流与规则</a><a class="side-link" href="../user/backhome.html">回家配置</a></div><div class="side-group"><p class="side-title">路由器配置</p><a class="side-link" href="routeros.html">RouterOS</a></div><div class="side-group"><p class="side-title">其他</p><a class="side-link" href="../user/faq.html">常见问题</a></div></aside><div class="overlay" id="overlay"></div><aside class="mobile-side" id="mobile"><div class="mobile-head">文档目录 <button class="icon-btn" id="close">✕</button></div><a class="side-link" href="../guide.html">快速开始</a><a class="side-link" href="native.html">Linux 原生部署</a><a class="side-link active" href="docker.html">Docker Compose</a><a class="side-link" href="../user/guide.html">功能使用</a><a class="side-link" href="../user/routing.html">分流与规则</a><a class="side-link" href="../user/backhome.html">回家配置</a><a class="side-link" href="routeros.html">RouterOS</a><a class="side-link" href="../user/faq.html">常见问题</a></aside>
+<main class="doc-main"><div class="doc-shell"><article class="article"><div class="breadcrumbs">首页 <span>›</span> 开始使用 <span>›</span> Docker Compose</div><h1>Docker Compose 独立 IP 部署</h1><div class="page-meta">约 10 分钟阅读 · 多架构镜像</div><div class="lead-box">容器同时连接出口 bridge 网络与 macvlan 局域网，为 CMSingBox 分配独立 IP。53、2080、9090、9092 不占宿主机端口。</div>
+<h2 id="image">镜像与架构</h2><p>公开镜像为 <code>darkver8/cmsingbox:latest</code>，支持 <code>linux/amd64</code>、<code>linux/arm64</code> 和 <code>linux/arm/v7</code>。同一条 pull 命令会自动选择设备架构。镜像已带基础 sing-box 内核，首次启动即可生成配置；之后仍可在后台更换内核。</p>
+<h2 id="prepare">部署前准备</h2><ol><li>安装 Docker Engine 与 Compose v2 插件。</li><li>找出真实 LAN 网卡，例如 <code>eth0</code>；不要使用 <code>docker0</code>。</li><li>在 DHCP 地址池之外选择空闲 IP，例如 <code>192.168.1.20</code>。</li><li>确认网关为 <code>192.168.1.1</code>，并用 ping 初步排除地址占用。</li></ol><div class="code"><button class="copy">复制</button><pre><code>docker compose version&#10;ip -4 route&#10;ip -br link&#10;ping -c 1 192.168.1.20</code></pre></div>
+<h2 id="quick">方式一：一键部署</h2><div class="code"><button class="copy">复制</button><pre><code>curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-docker.sh | sudo env CMSINGBOX_IP=192.168.1.20 sh</code></pre></div><p>脚本自动识别默认网卡和网段，网关默认写 <code>192.168.1.1</code>。多网卡或非默认网段请明确指定：</p><div class="code"><button class="copy">复制</button><pre><code>curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-docker.sh | sudo env CMSINGBOX_IP=192.168.1.20 CMSINGBOX_PARENT=eth0 CMSINGBOX_SUBNET=192.168.1.0/24 CMSINGBOX_GATEWAY=192.168.1.1 sh</code></pre></div>
+<h2 id="compose">方式二：手动 Compose</h2><p>先创建 macvlan：</p><div class="code"><button class="copy">复制</button><pre><code>docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 cmsingbox_lan</code></pre></div><p>在空目录保存 <code>compose.yml</code>：</p><div class="code"><button class="copy">复制</button><pre><code>services:&#10;  cmsingbox:&#10;    image: darkver8/cmsingbox:latest&#10;    container_name: cmsingbox&#10;    restart: unless-stopped&#10;    privileged: true&#10;    environment:&#10;      TZ: Asia/Shanghai&#10;    volumes:&#10;      - ./data:/data&#10;    networks:&#10;      egress:&#10;        gw_priority: 1&#10;      lan:&#10;        ipv4_address: 192.168.1.20&#10;&#10;networks:&#10;  egress:&#10;    driver: bridge&#10;  lan:&#10;    external: true&#10;    name: cmsingbox_lan</code></pre></div><p>拉取并启动：</p><div class="code"><button class="copy">复制</button><pre><code>docker compose pull&#10;docker compose up -d&#10;docker compose ps&#10;docker compose logs --tail=100 cmsingbox</code></pre></div><div class="callout"><strong>为什么使用两个网络</strong><code>lan</code> 提供独立局域网 IP；<code>egress</code> 作为默认互联网出口。只有 macvlan 时，部分主机上容器不能正常下载订阅或内核。</div>
+<h2 id="first">首次使用</h2><ol><li>打开 <code>http://192.168.1.20:9092</code>，初始账号、密码均为 <code>admin</code>。</li><li>修改密码，添加订阅并刷新节点。</li><li>保存并应用配置，启动 sing-box。</li><li>打开 <code>http://192.168.1.20:9090/ui/</code>；混合代理为 <code>192.168.1.20:2080</code>。</li><li>独立 DNS 默认关闭；开启后使用 <code>192.168.1.20:53</code>。</li></ol>
+<h2 id="dns">DNS 与端口</h2><p>进入“设置 → DNS”，开启独立 DNS，监听 <code>0.0.0.0:53</code>，选择分流模式并保存、应用配置。再将路由器或终端 DNS 指向容器 IP。macvlan 让容器拥有独立 IP，因此不会与宿主机的 53 端口冲突。</p><div class="callout warn"><strong>手机或电脑打不开独立 IP</strong>部分 Wi-Fi 网卡、云平台或交换机禁止一个物理端口出现多个 MAC 地址，这类环境不适合 macvlan，请改用原生部署。</div>
+<h2 id="maintenance">更新、日志与备份</h2><div class="code"><button class="copy">复制</button><pre><code>cd /opt/cmsingbox-docker&#10;docker compose pull&#10;docker compose up -d&#10;docker compose ps&#10;docker compose logs -f --tail=100</code></pre></div><p>一键脚本的数据在 <code>/opt/cmsingbox-docker/data</code>。升级前通过后台导出备份，也可停止容器后备份整个目录。不要执行 <code>docker compose down -v</code>。</p>
+<h2 id="isolation">macvlan 宿主机隔离</h2><p>宿主机默认无法直接访问自己的 macvlan 容器，而同一局域网的手机、电脑和路由器通常可以访问。这是 Linux macvlan 的正常行为，不代表服务故障。需要从宿主机访问时应按本机网段额外创建 macvlan shim；普通用户无需配置。</p>
+<h2 id="trouble">故障排查</h2><div class="table-wrap"><table><thead><tr><th>现象</th><th>检查</th></tr></thead><tbody><tr><td>容器启动后退出</td><td><code>docker compose logs --tail=200</code></td></tr><tr><td>订阅或内核下载失败</td><td>egress 网络、容器 DNS、系统时间和目标网址</td></tr><tr><td>局域网访问不到</td><td>parent 网卡、IP 冲突、交换机多 MAC 限制</td></tr><tr><td>代理 HTTP 错误</td><td>节点可用性、最终出站、规则和 sing-box 日志</td></tr><tr><td>DNS 端口没响应</td><td>独立 DNS 开关、保存应用、TCP/UDP 53</td></tr></tbody></table></div><div class="page-nav"><a href="native.html">← 上一页<strong>Linux 原生部署</strong></a><a href="../user/guide.html">下一页 →<strong>功能使用</strong></a></div></article><nav class="toc"><p class="toc-title">本页目录</p><a href="#image">镜像与架构</a><a href="#prepare">部署前准备</a><a href="#quick">一键部署</a><a href="#compose">手动 Compose</a><a href="#first">首次使用</a><a href="#dns">DNS 与端口</a><a href="#maintenance">更新与备份</a><a href="#isolation">macvlan 隔离</a><a href="#trouble">故障排查</a></nav></div><footer class="footer">CMSingBox · 中文文档</footer></main><script src="../assets/app.js"></script></body></html>

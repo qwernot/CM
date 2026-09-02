@@ -6,7 +6,7 @@
 
 ## 在线文档
 
-[https://qwernot.github.io/CM/](https://qwernot.github.io/CM/)
+[https://666228.xyz/CM/](https://666228.xyz/CM/)
 
 ## 原生一键部署
 
@@ -38,3 +38,5 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 - `bin`：普通主程序多架构二进制
 
 管理员授权端、授权文档和完整项目源代码不在本公开仓库中。
+
+文档已按“快速开始 → 部署方式 → 功能使用 → 分流与规则 → 回家配置 → RouterOS → 常见问题”组织。其中 RouterOS 教程包括 Container 安装、veth 独立 IP、DNS 下发/劫持、FakeIP 路由、按设备分流、验证和断网回滚。
