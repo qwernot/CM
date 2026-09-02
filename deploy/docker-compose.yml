@@ -1,7 +1,6 @@
 services:
   cmsingbox:
-    build: .
-    image: cmsingbox:local
+    image: ${CMSINGBOX_IMAGE:-darkver8/cmsingbox:latest}
     container_name: cmsingbox
     restart: unless-stopped
     privileged: true

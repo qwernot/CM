@@ -51,13 +51,6 @@ if command -v ping >/dev/null 2>&1 && ping -c 1 -W 1 "$container_ip" >/dev/null 
   exit 1
 fi
 
-case "$(uname -m)" in
-  x86_64|amd64) architecture="amd64" ;;
-  aarch64|arm64) architecture="arm64" ;;
-  armv7l|armv7) architecture="arm" ;;
-  *) echo "不支持的架构: $(uname -m)" >&2; exit 1 ;;
-esac
-
 network_name=""
 for network_id in $(docker network ls -q); do
   network_driver="$(docker network inspect "$network_id" --format '{{.Driver}}')"
@@ -85,13 +78,10 @@ else
 fi
 
 mkdir -p "$install_dir/data"
-curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$install_dir/cmsingbox"
-curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/bin/sing-box-linux-${architecture}" -o "$install_dir/sing-box"
-curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/deploy/Dockerfile" -o "$install_dir/Dockerfile"
 curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/deploy/docker-compose.yml" -o "$install_dir/docker-compose.yml"
-chmod 0755 "$install_dir/cmsingbox" "$install_dir/sing-box"
 
 license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}"
+container_image="${CMSINGBOX_IMAGE:-darkver8/cmsingbox:latest}"
 umask 077
 {
   printf 'CMSINGBOX_IP=%s\n' "$container_ip"
@@ -100,10 +90,12 @@ umask 077
   printf 'CMSINGBOX_GATEWAY=%s\n' "$gateway"
   printf 'CMSINGBOX_DOCKER_NETWORK=%s\n' "$network_name"
   printf 'CMSINGBOX_LICENSE_PUBLIC_KEY=%s\n' "$license_public_key"
+  printf 'CMSINGBOX_IMAGE=%s\n' "$container_image"
 } > "$install_dir/.env"
 
 cd "$install_dir"
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 
 echo
 echo "CMSingBox Docker 容器已启动"

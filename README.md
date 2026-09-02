@@ -28,6 +28,8 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 
 把 `192.168.1.20` 换成实际地址。脚本会自动识别默认网卡和局域网网段，macvlan 网关默认为 `192.168.1.1`，并给容器分配独立 IP；其他网关可通过 `CMSINGBOX_GATEWAY` 覆盖。
 
+公开镜像为 `darkver8/cmsingbox:latest`，支持 `linux/amd64`、`linux/arm64` 和 `linux/arm/v7`。也可以参照在线文档直接使用 Docker Compose 部署。
+
 ## 目录
 
 - `docs/user`：普通用户功能与排障文档
