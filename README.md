@@ -37,6 +37,4 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 - `deploy`：普通主程序安装脚本与 Docker 配置
 - `bin`：普通主程序多架构二进制
 
-管理员授权端、授权文档和完整项目源代码不在本公开仓库中。
-
 文档已按“快速开始 → 部署方式 → 功能使用 → 分流与规则 → 回家配置 → RouterOS → 常见问题”组织。其中 RouterOS 教程包括 Container 安装、veth 独立 IP、DNS 下发/劫持、FakeIP 路由、按设备分流、验证和断网回滚。
