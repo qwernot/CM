@@ -33,8 +33,8 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 ## 目录
 
 - `docs/user`：普通用户功能与排障文档
-- `docs/deploy`：原生、Docker 与 RouterOS 部署教程
+- `docs/deploy`：原生、Docker、RouterOS、爱快、UniFi/UBNT、OPNsense 与通用路由器教程
 - `deploy`：普通主程序安装脚本与 Docker 配置
 - `bin`：普通主程序多架构二进制
 
-文档已按“快速开始 → 部署方式 → 功能使用 → 分流与规则 → 回家配置 → RouterOS → 常见问题”组织。其中 RouterOS 教程包括 Container 安装、veth 独立 IP、DNS 下发/劫持、FakeIP 路由、按设备分流、验证和断网回滚。
+文档已按“快速开始 → 部署方式 → 功能使用 → 分流与规则 → 回家配置 → 路由器配置 → 常见问题”组织。路由器部分涵盖 RouterOS、爱快、UniFi/UBNT、OPNsense 和支持静态路由的通用设备，统一说明 DNS 下发/劫持、FakeIP 与纯 IP 路由、按设备分流、NAT、防环回、验证和断网回滚。
