@@ -8,7 +8,6 @@ services:
     privileged: true
     environment:
       TZ: Asia/Shanghai
-      CMSINGBOX_LICENSE_PUBLIC_KEY: EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=
     volumes:
       - ./data:/data
     networks:

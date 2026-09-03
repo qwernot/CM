@@ -80,7 +80,6 @@ fi
 mkdir -p "$install_dir/data"
 curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/deploy/docker-compose.auto.yml" -o "$install_dir/docker-compose.yml"
 
-license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}"
 container_image="${CMSINGBOX_IMAGE:-darkver8/cmsingbox:latest}"
 umask 077
 {
@@ -89,7 +88,6 @@ umask 077
   printf 'CMSINGBOX_SUBNET=%s\n' "$subnet"
   printf 'CMSINGBOX_GATEWAY=%s\n' "$gateway"
   printf 'CMSINGBOX_DOCKER_NETWORK=%s\n' "$network_name"
-  printf 'CMSINGBOX_LICENSE_PUBLIC_KEY=%s\n' "$license_public_key"
   printf 'CMSINGBOX_IMAGE=%s\n' "$container_image"
 } > "$install_dir/.env"
 
