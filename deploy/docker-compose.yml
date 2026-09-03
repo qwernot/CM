@@ -1,12 +1,14 @@
+# 手动部署无需预先创建 Docker 网络。
+# 使用前只修改带有 ①②③④ 标记的四行。
 services:
   cmsingbox:
-    image: ${CMSINGBOX_IMAGE:-darkver8/cmsingbox:latest}
+    image: darkver8/cmsingbox:latest
     container_name: cmsingbox
     restart: unless-stopped
     privileged: true
     environment:
       TZ: Asia/Shanghai
-      CMSINGBOX_LICENSE_PUBLIC_KEY: ${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}
+      CMSINGBOX_LICENSE_PUBLIC_KEY: EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=
     volumes:
       - ./data:/data
     networks:
@@ -14,11 +16,16 @@ services:
         gw_priority: 1
       cmsingbox_lan:
         gw_priority: 0
-        ipv4_address: ${CMSINGBOX_IP:?请设置 CMSINGBOX_IP}
+        ipv4_address: 192.168.1.20 # ① 容器独立 IP
 
 networks:
   cmsingbox_egress:
     driver: bridge
   cmsingbox_lan:
-    external: true
-    name: ${CMSINGBOX_DOCKER_NETWORK:?请设置 CMSINGBOX_DOCKER_NETWORK}
+    driver: macvlan
+    driver_opts:
+      parent: eth0                 # ④ 宿主机 LAN 网卡
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24   # ② 局域网网段
+          gateway: 192.168.1.1     # ③ 局域网网关

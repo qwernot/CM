@@ -1,0 +1,24 @@
+services:
+  cmsingbox:
+    image: ${CMSINGBOX_IMAGE:-darkver8/cmsingbox:latest}
+    container_name: cmsingbox
+    restart: unless-stopped
+    privileged: true
+    environment:
+      TZ: Asia/Shanghai
+      CMSINGBOX_LICENSE_PUBLIC_KEY: ${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}
+    volumes:
+      - ./data:/data
+    networks:
+      cmsingbox_egress:
+        gw_priority: 1
+      cmsingbox_lan:
+        gw_priority: 0
+        ipv4_address: ${CMSINGBOX_IP:?请设置 CMSINGBOX_IP}
+
+networks:
+  cmsingbox_egress:
+    driver: bridge
+  cmsingbox_lan:
+    external: true
+    name: ${CMSINGBOX_DOCKER_NETWORK:?请设置 CMSINGBOX_DOCKER_NETWORK}
