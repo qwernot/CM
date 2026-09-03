@@ -11,15 +11,10 @@ services:
     volumes:
       - ./data:/data
     networks:
-      cmsingbox_egress:
-        gw_priority: 1
       cmsingbox_lan:
-        gw_priority: 0
         ipv4_address: 192.168.1.20 # ① 容器独立 IP
 
 networks:
-  cmsingbox_egress:
-    driver: bridge
   cmsingbox_lan:
     driver: macvlan
     driver_opts:

@@ -9,15 +9,10 @@ services:
     volumes:
       - ./data:/data
     networks:
-      cmsingbox_egress:
-        gw_priority: 1
       cmsingbox_lan:
-        gw_priority: 0
         ipv4_address: ${CMSINGBOX_IP:?请设置 CMSINGBOX_IP}
 
 networks:
-  cmsingbox_egress:
-    driver: bridge
   cmsingbox_lan:
     external: true
     name: ${CMSINGBOX_DOCKER_NETWORK:?请设置 CMSINGBOX_DOCKER_NETWORK}
