@@ -78,7 +78,7 @@ else
 fi
 
 mkdir -p "$install_dir/data"
-curl --retry 5 --retry-all-errors -fsSL "${repository_raw}/deploy/docker-compose.auto.yml" -o "$install_dir/docker-compose.yml"
+curl --retry 5 -fsSL "${repository_raw}/deploy/docker-compose.auto.yml" -o "$install_dir/docker-compose.yml"
 
 container_image="${CMSINGBOX_IMAGE:-darkver8/cmsingbox:latest}"
 umask 077
