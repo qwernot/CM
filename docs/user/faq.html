@@ -7,7 +7,7 @@
 <h2 id="http">连接代理后出现 HTTP 错误</h2><ul><li><code>407</code>：代理认证已开启，使用代理用户名密码，不是后台密码。</li><li><code>502</code> 或连接失败：当前节点不可用、规则选错出站或订阅已失效。</li><li>部分站点失败：检查 DNS 分流、IPv6、纯 IP 目标及最终出站。</li></ul><p>先用显式代理访问一个 IP 查询站点，再到控制台看连接走向；这样能区分“代理入口问题”和“路由规则问题”。</p>
 <h2 id="switch">HTTP/SOCKS5 开关刷新后又关闭</h2><p>切换后必须点击设置页保存按钮，再应用配置。若保存仍回退，查看应用日志是否有字段校验或写入错误。混合代理默认应开启，密码不是强制项；关闭认证时不要把 2080 暴露到公网。</p>
 <h2 id="console">代理控制台打不开或要求手填信息</h2><p>先确认 sing-box 已运行、9090 正在监听。入口应使用当前访问后台的 IP，而不是 <code>127.0.0.1</code>；可直接访问 <code>http://CMSingBox-IP:9090/ui/</code>。修改 Clash API 端口或密钥后必须重新应用配置。</p>
-<h2 id="dns">DNS 在哪里开启</h2><p>进入“设置 → DNS”，开启“独立 DNS 服务”，监听地址设为 <code>0.0.0.0</code>、端口默认 <code>53</code>，保存并应用配置。然后还要在 DHCP 或终端中把 DNS 指向 CMSingBox IP。Docker/RouterOS 使用独立 IP，不占宿主机的 53。</p>
+<h2 id="dns">DNS 在哪里开启</h2><p>进入“设置 → DNS”，开启“独立 DNS 服务”，监听地址设为 <code>0.0.0.0</code>、端口默认 <code>53</code>，保存并应用配置。然后还要在 DHCP 或终端中把 DNS 指向 CMSingBox IP。代理 DNS 上游的 <code>127.0.0.1:1053</code> 是同机内部地址，不是客户端要填写的地址，也不要替换成部署机器的局域网 IP。Docker/RouterOS 使用独立 IP，不占宿主机的 53。</p>
 <h2 id="docker">Docker 内核无法下载</h2><p>镜像已经集成基础内核，不下载也能启动。在线更新失败时检查容器 egress 网络、DNS、GitHub 连通性和设置中的 GitHub 代理。确认 Compose 同时有 <code>egress</code> 与 <code>lan</code> 网络。</p><div class="code"><button class="copy">复制</button><pre><code>docker exec cmsingbox sh -c 'ip route; cat /etc/resolv.conf'&#10;docker compose logs --tail=200 cmsingbox</code></pre></div>
 <h2 id="macvlan">Docker 宿主机打不开容器，但手机能打开</h2><p>这是 macvlan 默认隔离。局域网其他设备能访问说明服务正常。若所有设备都不通，检查 parent 物理网卡、独立 IP 冲突、交换机或云平台是否允许多个 MAC。</p>
 <h2 id="ros">RouterOS 配置 DNS 后断网</h2><p>只配置 DNS 而没有 FakeIP 路由会断网；把 CMSingBox 自己加入代理设备列表也会环回。先按 <a href="../deploy/routeros.html#rollback">断网回滚</a>停用 mangle 和 DNS NAT，再逐项检查透明代理、路由表和计数。</p>
