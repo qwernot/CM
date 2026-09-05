@@ -40,6 +40,7 @@ const pages = [
   ['快速开始', '安装方式、默认端口与首次配置', 'guide.html'],
   ['Linux 原生部署', 'systemd 一键安装与维护', 'deploy/native.html'],
   ['Docker Compose', '多架构镜像与 macvlan 独立 IP', 'deploy/docker.html'],
+  ['飞牛 fnOS', '应用中心手动安装 FPK 与 53 端口隔离', 'deploy/fnos.html'],
   ['RouterOS 部署', '容器、veth、DNS 与按设备分流', 'deploy/routeros.html'],
   ['爱快分流', 'DHCP DNS、端口分流与 FakeIP 静态路由', 'deploy/ikuai.html'],
   ['UniFi / UBNT 分流', 'Network List、静态路由与 NAT', 'deploy/ubnt.html'],
@@ -57,6 +58,15 @@ const routerPages = [
   ['OPNsense', 'opnsense.html'],
   ['其他路由器', 'other-router.html']
 ];
+document.querySelectorAll('.side-link[href$="docker.html"]').forEach(dockerLink => {
+  const href = dockerLink.getAttribute('href') || '';
+  const prefix = href.slice(0, -'docker.html'.length);
+  const link = document.createElement('a');
+  link.className = 'side-link';
+  link.href = `${prefix}fnos.html`;
+  link.textContent = '飞牛 fnOS';
+  dockerLink.insertAdjacentElement('afterend', link);
+});
 document.querySelectorAll('.side-link[href$="routeros.html"]').forEach(routerOSLink => {
   const href = routerOSLink.getAttribute('href') || '';
   const prefix = href.slice(0, -'routeros.html'.length);
@@ -71,7 +81,7 @@ document.querySelectorAll('.side-link[href$="routeros.html"]').forEach(routerOSL
   });
 });
 const currentFile = location.pathname.split('/').pop();
-if (routerPages.some(([, file]) => file === currentFile)) {
+if (currentFile === 'fnos.html' || routerPages.some(([, file]) => file === currentFile)) {
   document.querySelectorAll('.side-link.active').forEach(link => link.classList.remove('active'));
   document.querySelectorAll(`.side-link[href$="${currentFile}"]`).forEach(link => link.classList.add('active'));
 }

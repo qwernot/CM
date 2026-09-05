@@ -30,10 +30,14 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 
 公开镜像为 `darkver8/cmsingbox:latest`，支持 `linux/amd64`、`linux/arm64` 和 `linux/arm/v7`。手动部署可直接下载 `deploy/docker-compose.yml`，在同一个文件中修改容器 IP、网段、网关和宿主机 LAN 网卡后运行。
 
+## 飞牛 fnOS FPK
+
+飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.0.26-all.fpk`](docs/downloads/CMSingBox-fnOS-1.0.26-all.fpk)。安装向导通过 Docker macvlan 分配独立局域网 IP，避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
+
 ## 目录
 
 - `docs/user`：普通用户功能与排障文档
-- `docs/deploy`：原生、Docker、RouterOS、爱快、UniFi/UBNT、OPNsense 与通用路由器教程
+- `docs/deploy`：原生、Docker、飞牛 fnOS、RouterOS、爱快、UniFi/UBNT、OPNsense 与通用路由器教程
 - `deploy`：普通主程序安装脚本与 Docker 配置
 - `bin`：普通主程序多架构二进制
 
