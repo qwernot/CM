@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 
 ## 飞牛 fnOS FPK
 
-飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.0.26-all.fpk`](docs/downloads/CMSingBox-fnOS-1.0.26-all.fpk)。安装向导通过 Docker macvlan 分配独立局域网 IP，避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
+飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.0.27-all.fpk`](docs/downloads/CMSingBox-fnOS-1.0.27-all.fpk)。安装程序会复用已有同网段 macvlan/ipvlan，或自动创建独立网络，避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
 
 ## 目录
 
