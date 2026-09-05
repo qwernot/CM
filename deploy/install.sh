@@ -21,6 +21,26 @@ if ! command -v systemctl >/dev/null 2>&1 || [ ! -d /run/systemd/system ]; then
   exit 1
 fi
 
+# 透明代理需要 nftables 和策略路由。按发行版自动补齐，避免面板显示“当前环境缺少 nftables”。
+if ! command -v nft >/dev/null 2>&1 || ! command -v ip >/dev/null 2>&1; then
+  echo "正在安装透明代理所需的 nftables 和 iproute2..."
+  if command -v apt-get >/dev/null 2>&1; then
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y nftables iproute2
+  elif command -v dnf >/dev/null 2>&1; then
+    dnf install -y nftables iproute
+  elif command -v yum >/dev/null 2>&1; then
+    yum install -y nftables iproute
+  elif command -v zypper >/dev/null 2>&1; then
+    zypper --non-interactive install nftables iproute2
+  elif command -v pacman >/dev/null 2>&1; then
+    pacman -Sy --noconfirm nftables iproute2
+  else
+    echo "无法识别系统包管理器，请先手动安装 nftables 和 iproute2。" >&2
+    exit 1
+  fi
+fi
+
 case "$(uname -m)" in
   x86_64|amd64) architecture="amd64" ;;
   aarch64|arm64) architecture="arm64" ;;
