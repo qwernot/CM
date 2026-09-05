@@ -95,6 +95,14 @@ cd "$install_dir"
 docker compose pull
 docker compose up -d
 
+# macvlan 默认隔离宿主机；创建 shim 后，宿主机也能访问容器独立 IP。
+shim_name="cmsingbox-shim"
+if ! ip link show dev "$shim_name" >/dev/null 2>&1; then
+  ip link add "$shim_name" link "$parent" type macvlan mode bridge
+fi
+ip link set "$shim_name" up
+ip route replace "$container_ip/32" dev "$shim_name"
+
 echo
 echo "CMSingBox Docker 容器已启动"
 echo "管理地址: http://${container_ip}:9092"
