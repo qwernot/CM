@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "docs/**"
+      - "rules/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -28,9 +29,14 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: 合并文档与规则镜像
+        run: |
+          mkdir -p public
+          cp -a docs/. public/
+          cp -a rules public/rules
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: public
       - name: 发布 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
