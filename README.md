@@ -32,7 +32,11 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 
 ## 飞牛 fnOS FPK
 
-飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.0.37-all.fpk`](docs/downloads/CMSingBox-fnOS-1.0.37-all.fpk)。安装程序会复用已有同网段 macvlan/ipvlan，并创建宿主机 shim 路由，让飞牛本机也能访问，同时避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
+飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.0.38-all.fpk`](docs/downloads/CMSingBox-fnOS-1.0.38-all.fpk)。安装程序会复用已有同网段 macvlan/ipvlan，并创建宿主机 shim 路由，让飞牛本机也能访问，同时避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
+
+## 默认分流
+
+1.0.38 起默认采用 11 组分流：CN-CDN、Youtube、Telegram、Spotify、Netflix、AI、Github、Google、Steam、CN、!CN。CN-CDN 与 CN 直连，其余默认走代理。旧版升级会替换旧预设，但保留手动规则和节点；规则数据从本项目文档站获取。
 
 ## 目录
 
