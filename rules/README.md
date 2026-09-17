@@ -6,4 +6,4 @@
 - `rule-set-geoip/`：IP 规则。
 - `SHA256SUMS`：当前镜像文件的完整性校验。
 
-这些文件是规则数据，不包含可执行代码。当前快照来源于 `lyc8503/sing-box-rules` 的公开构建产物；CMSingBox 默认只从本仓库地址读取镜像。更新规则时应先在测试机执行 `sing-box check`，再替换本目录文件。
+这些文件是规则数据，不包含可执行代码。原有规则快照来源于 [`lyc8503/sing-box-rules`](https://github.com/lyc8503/sing-box-rules) 的公开构建产物。2026-09-17 更新的 11 组默认规则文件来源于 [`MetaCubeX/meta-rules-dat`](https://github.com/MetaCubeX/meta-rules-dat) 的 `sing` 分支，依照其 GPL-3.0 许可分发（见 `METACUBEX-LICENSE`）；规则数据与 CMSingBox 程序分别提供。CMSingBox 默认只从本仓库地址读取镜像。更新规则时应先在测试机执行 `sing-box check`，再替换本目录文件。
