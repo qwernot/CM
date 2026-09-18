@@ -18,6 +18,8 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install.sh |
 
 默认使用宿主机 IP，后台端口为 9092。原生部署会直接使用宿主机端口；如果 53、2080 或 9092 已被占用，请在后台修改对应端口，后台端口也可通过 `CMSINGBOX_PORT` 在安装时指定。
 
+当前一键安装提供 CMSingBox 1.0.39；已安装的机器重新执行同一命令即可更新管理程序，数据目录与现有内核保留。
+
 ## Docker 独立 IP 部署
 
 准备一个与 Docker 宿主机同网段、位于 DHCP 自动分配范围之外的空闲 IP：
