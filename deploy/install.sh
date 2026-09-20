@@ -4,7 +4,7 @@ set -eu
 repository_raw="https://raw.githubusercontent.com/qwernot/CM/main"
 install_dir="${CMSINGBOX_INSTALL_DIR:-/opt/cmsingbox}"
 data_dir="${CMSINGBOX_DATA_DIR:-/var/lib/cmsingbox}"
-listen_port="${CMSINGBOX_PORT:-9092}"
+listen_port="${CMSINGBOX_PORT:-80}"
 environment_file="/etc/cmsingbox.env"
 service_file="/etc/systemd/system/cmsingbox.service"
 
@@ -54,15 +54,40 @@ trap 'rm -f "$temporary_binary" "$temporary_kernel"' EXIT HUP INT TERM
 echo "正在下载 CMSingBox 原生程序..."
 curl --retry 5 -fsSL "${repository_raw}/bin/cmsingbox-linux-${architecture}" -o "$temporary_binary"
 chmod 0755 "$temporary_binary"
+if ! "$temporary_binary" -h >/dev/null 2>&1; then
+  echo "下载的 CMSingBox 程序无法在当前机器运行。" >&2
+  exit 1
+fi
 
 mkdir -p "$install_dir" "$data_dir"
-systemctl stop cmsingbox.service 2>/dev/null || true
-install -m 0755 "$temporary_binary" "$install_dir/cmsingbox"
 if [ ! -x "$data_dir/bin/sing-box" ]; then
   echo "正在安装内置 sing-box 基础内核..."
   curl --retry 5 -fsSL "${repository_raw}/bin/sing-box-linux-${architecture}" -o "$temporary_kernel"
   mkdir -p "$data_dir/bin"
   install -m 0755 "$temporary_kernel" "$data_dir/bin/sing-box"
+fi
+
+backup_binary="$install_dir/cmsingbox.rollback"
+had_previous=0
+if [ -x "$install_dir/cmsingbox" ]; then
+  cp -p "$install_dir/cmsingbox" "$backup_binary"
+  had_previous=1
+fi
+rollback() {
+  echo "新版本启动失败，正在回滚..." >&2
+  if [ "$had_previous" -eq 1 ] && [ -f "$backup_binary" ]; then
+    install -m 0755 "$backup_binary" "$install_dir/cmsingbox"
+    systemctl daemon-reload
+    systemctl restart cmsingbox.service || true
+  else
+    systemctl stop cmsingbox.service 2>/dev/null || true
+  fi
+  exit 1
+}
+
+systemctl stop cmsingbox.service 2>/dev/null || true
+if ! install -m 0755 "$temporary_binary" "$install_dir/cmsingbox"; then
+  rollback
 fi
 
 license_public_key="${CMSINGBOX_LICENSE_PUBLIC_KEY:-EwFgPIqxKUjPY45bIUHviX4fyZLAGoww6q5QJs9fKcE=}"
@@ -91,8 +116,22 @@ umask 077
 } > "$service_file"
 
 chmod 0600 "$environment_file"
-systemctl daemon-reload
-systemctl enable --now cmsingbox.service
+if ! systemctl daemon-reload || ! systemctl enable --now cmsingbox.service; then
+  rollback
+fi
+
+healthy=0
+attempt=0
+while [ "$attempt" -lt 30 ]; do
+  if curl -fsS "http://127.0.0.1:${listen_port}/" >/dev/null 2>&1; then
+    healthy=1
+    break
+  fi
+  attempt=$((attempt + 1))
+  sleep 1
+done
+[ "$healthy" -eq 1 ] || rollback
+rm -f "$backup_binary"
 
 server_ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
 [ -n "$server_ip" ] || server_ip="服务器IP"

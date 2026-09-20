@@ -92,8 +92,16 @@ umask 077
 } > "$install_dir/.env"
 
 cd "$install_dir"
+previous_image="$(docker inspect --format '{{.Image}}' cmsingbox 2>/dev/null || true)"
 docker compose pull
-docker compose up -d
+if ! docker compose up -d; then
+  if [ -n "$previous_image" ]; then
+    docker image tag "$previous_image" "$container_image"
+    docker compose up -d --force-recreate || true
+  fi
+  echo "新镜像启动失败，已尝试恢复旧镜像。" >&2
+  exit 1
+fi
 
 # macvlan 默认隔离宿主机；创建 shim 后，宿主机也能访问容器独立 IP。
 shim_name="cmsingbox-shim"
@@ -103,9 +111,28 @@ fi
 ip link set "$shim_name" up
 ip route replace "$container_ip/32" dev "$shim_name"
 
+healthy=0
+attempt=0
+while [ "$attempt" -lt 30 ]; do
+  if curl -fsS "http://${container_ip}/" >/dev/null 2>&1; then
+    healthy=1
+    break
+  fi
+  attempt=$((attempt + 1))
+  sleep 1
+done
+if [ "$healthy" -ne 1 ]; then
+  if [ -n "$previous_image" ]; then
+    docker image tag "$previous_image" "$container_image"
+    docker compose up -d --force-recreate || true
+  fi
+  echo "新镜像健康检查失败，已尝试恢复旧镜像。" >&2
+  exit 1
+fi
+
 echo
 echo "CMSingBox Docker 容器已启动"
-echo "管理地址: http://${container_ip}:9092"
+echo "管理地址: http://${container_ip}"
 echo "HTTP/SOCKS5: ${container_ip}:2080"
 echo "初始账号: admin"
 echo "初始密码: admin"
