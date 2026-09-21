@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install.sh |
 
 默认使用宿主机 IP，后台端口为 80。原生部署会直接使用宿主机端口；如果 53、2080 或 80 已被占用，请在后台修改对应端口，后台端口也可通过 `CMSINGBOX_PORT` 在安装时指定。
 
-当前一键安装提供 CMSingBox 1.1.6；已安装的机器重新执行同一命令即可更新管理程序，数据目录与现有内核保留。
+当前一键安装提供 CMSingBox 1.1.7；已安装的机器重新执行同一命令即可更新管理程序，数据目录与现有内核保留。
 
 ## Docker 独立 IP 部署
 
@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/qwernot/CM/main/deploy/install-dock
 
 ## 飞牛 fnOS FPK
 
-飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.1.6-all.fpk`](docs/downloads/CMSingBox-fnOS-1.1.6-all.fpk)。安装程序会复用已有同网段 macvlan/ipvlan，并创建宿主机 shim 路由，让飞牛本机也能访问，同时避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
+飞牛 NAS 可在“应用中心 → 手动安装”上传 [`CMSingBox-fnOS-1.1.7-all.fpk`](docs/downloads/CMSingBox-fnOS-1.1.7-all.fpk)。安装程序会复用已有同网段 macvlan/ipvlan，并创建宿主机 shim 路由，让飞牛本机也能访问，同时避免与飞牛宿主机的 DNS 53 端口冲突。详细步骤见[飞牛 fnOS 教程](https://666228.xyz/CM/deploy/fnos.html)。
 
 ## 默认分流
 
