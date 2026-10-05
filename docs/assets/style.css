@@ -86,9 +86,6 @@ code { font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace; }
 .article p, .article li { color: var(--text); font-size: 15px; line-height: 1.9; }
 .article ol, .article ul { padding-left: 23px; }
 .article a:not(.button) { color: var(--brand); }
-.article figure { margin: 22px 0; }
-.article figure img { display: block; width: 100%; max-height: 620px; object-fit: contain; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-soft); }
-.article figcaption { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .article code:not(pre code) { padding: 2px 6px; border-radius: 5px; background: var(--bg-soft); color: var(--brand); font-size: 13px; }
 .lead-box { margin: 22px 0 32px; padding: 16px 18px; border-left: 3px solid var(--brand); background: var(--bg-soft); color: var(--text); line-height: 1.8; }
 .callout { margin: 22px 0; padding: 16px 18px; border-left: 4px solid var(--brand); border-radius: 7px; background: color-mix(in srgb, var(--brand) 9%, var(--bg)); color: var(--text); font-size: 14px; line-height: 1.8; }
@@ -157,9 +154,6 @@ td { color: var(--text); }
   .article h1 { font-size: 30px; }
   .article h2 { font-size: 23px; }
   .article p, .article li { font-size: 14px; line-height: 1.8; }
-  .article figure { margin: 18px -2px; }
-  .article figure img { max-height: none; border-radius: 8px; }
-  .article figcaption { font-size: 11px; }
   .code pre { padding: 16px 14px; font-size: 12px; }
   .copy { position: static; display: block; margin: 8px 8px 0 auto; }
   table { min-width: 520px; font-size: 13px; }
