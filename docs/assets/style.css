@@ -143,6 +143,9 @@ td { color: var(--text); }
   .overlay.open { display: block; position: fixed; inset: 0; z-index: 60; background: #0009; }
   .mobile-side.open { display: block; position: fixed; inset: 0 auto 0 0; z-index: 61; width: min(310px, 86vw); padding: 20px 16px; overflow-y: auto; border-right: 1px solid var(--line); background: var(--bg); }
   .mobile-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; color: var(--text-strong); font-weight: 700; }
+  .mobile-group { margin-bottom: 20px; }
+  .mobile-group-title { margin: 0 0 7px; padding: 0 12px; color: var(--text-strong); font-size: 15px; font-weight: 700; }
+  .mobile-group .side-link { display: block; margin: 2px 0; }
 }
 
 @media (max-width: 560px) {
