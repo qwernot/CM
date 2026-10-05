@@ -42,14 +42,15 @@
 <div class="code"><button class="copy">复制</button><pre><code>198.18.0.0/15 CMSingBox FakeIP</code></pre></div>
 <p>Telegram 等直接连接纯 IP 的应用可把相应网段继续加入 <code>proxy_cidr</code>。不要把 <code>192.168.8.0/24</code> 加入目标组。</p>
 
-<h2 id="dns">四、只劫持所选设备的 DNS</h2>
+<h2 id="dns">四、只劫持所选设备的 DNS</h2><figure><img src="../assets/reference/ikuai-dns.png" alt="爱快 DNS 配置示意图" loading="lazy"><figcaption>参考图：爱快 DNS/DHCP 配置位置。</figcaption></figure>
 <p>进入“<strong>网络设置 → NAT规则 → 添加</strong>”，创建一条规则：</p>
 <div class="table-wrap"><table><thead><tr><th>字段</th><th>填写值</th></tr></thead><tbody>
 <tr><td>动作</td><td>目的地址NAT</td></tr><tr><td>进接口</td><td><code>lan1</code></td></tr><tr><td>源地址</td><td>选择 <code>proxy_device</code></td></tr><tr><td>目的地址</td><td>留空，表示任意 DNS 地址</td></tr><tr><td>协议</td><td><code>tcp+udp</code></td></tr><tr><td>目的端口</td><td><code>53</code></td></tr><tr><td>NAT地址</td><td><code>192.168.8.6</code></td></tr><tr><td>NAT端口</td><td><code>53</code></td></tr><tr><td>备注</td><td><code>CMSingBox-DNS</code></td></tr>
 </tbody></table></div>
 <p>爱快 3.7.23 可直接选择 <code>tcp+udp</code>，因此一条规则即可同时处理 TCP 与 UDP DNS。DHCP 中原有的公共 DNS 可以保持不变；只有 <code>proxy_device</code> 中的设备会被重定向。</p>
 
-<h2 id="route">五、把 FakeIP 流量送到 CMSingBox</h2>
+
+<h2 id="route">五、把 FakeIP 流量送到 CMSingBox</h2><figure><img src="../assets/reference/ikuai-route.png" alt="爱快策略路由配置示意图" loading="lazy"><figcaption>参考图：爱快目标地址与下一跳配置位置。</figcaption></figure>
 <p>进入“<strong>流控分流 → 分流设置 → 端口分流 → 添加</strong>”，填写：</p>
 <div class="table-wrap"><table><thead><tr><th>字段</th><th>填写值</th></tr></thead><tbody>
 <tr><td>分流方式</td><td>下一跳网关</td></tr><tr><td>下一跳网关</td><td><code>192.168.8.6</code></td></tr><tr><td>协议</td><td><code>tcp+udp</code></td></tr><tr><td>源地址</td><td>选择 <code>proxy_device</code></td></tr><tr><td>目的地址</td><td>选择 <code>proxy_cidr</code></td></tr><tr><td>生效周期</td><td>全选</td></tr><tr><td>生效时间</td><td><code>00:00-23:59</code></td></tr><tr><td>备注</td><td><code>CMSingBox-FakeIP</code></td></tr>
