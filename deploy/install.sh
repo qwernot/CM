@@ -8,6 +8,15 @@ listen_port="${CMSINGBOX_PORT:-80}"
 environment_file="/etc/cmsingbox.env"
 service_file="/etc/systemd/system/cmsingbox.service"
 
+# 升级时保留已安装实例的端口；新安装仍默认 80，显式环境变量优先。
+if [ -z "${CMSINGBOX_PORT:-}" ] && [ -f "$service_file" ]; then
+  previous_port="$(sed -n 's/.* -port \([0-9][0-9]*\).*/\1/p' "$service_file" | head -n 1)"
+  case "$previous_port" in
+    ''|*[!0-9]*) ;;
+    *) if [ "$previous_port" -ge 1 ] && [ "$previous_port" -le 65535 ]; then listen_port="$previous_port"; fi ;;
+  esac
+fi
+
 if [ "$(id -u)" -ne 0 ]; then
   echo "请使用 root 运行，或在命令中加入 sudo。" >&2
   exit 1
