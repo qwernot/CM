@@ -1,18 +1,18 @@
 {
-  "version": "1.2.2",
-  "notes": "手机配置内置默认规则，修复规则下载超时导致无法启动；新增本地订阅链接二维码与复制功能，防止使用未保存的配置链接。",
+  "version": "1.2.3",
+  "notes": "默认 9090 控制面板改为离线内置 MetaCubeXD，与 123 已验证的面板一致；自动连接同端口 API，自定义面板和用户数据保留。",
   "assets": {
     "amd64": {
-      "sha256": "4c72af8388b15047f34d3ac4a9a37b3acac53540de94ff75a137e1dcafe169af",
-      "size": 29753506
+      "sha256": "c9ebfc016dac6dd40fec96b693fcb41bcbfa67e542bbb01f472dc25313941d3e",
+      "size": 29397154
     },
     "arm64": {
-      "sha256": "ac600a0da4cd7a8b8970656cdd378b1cb86540b0c6bee612c3fecd6c322193cc",
-      "size": 28115106
+      "sha256": "bd0a30c8b4eb34a56ae6a1c9679996f94c3618f421f04ca11727cf7dfb741ff4",
+      "size": 27787426
     },
     "arm": {
-      "sha256": "7dd5f8cae170b60d431b76fc7dcfb9d528a7f3a0c634a74b7f4401ac876a8a9d",
-      "size": 28967074
+      "sha256": "1c4eded65bb3cf34c4db05a2933cffc9eb4f127fa91d641fcd88cee7cff1afb3",
+      "size": 28639394
     }
   }
 }

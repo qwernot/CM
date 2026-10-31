@@ -2,7 +2,7 @@
 
 本仓库只保存 CMSingBox 的中文部署文档、一键安装脚本、公开运行二进制和容器构建文件，不包含授权私钥。
 
-原生部署内置 sing-box 1.13.21，Docker 镜像内置 1.14.0；已有数据目录会保留用户当前内核。1.2.1 起管理程序还真正内置兼容 sing-box 的 Zashboard 3.22.0，首次启动不需要再下载面板。第三方组件来源、许可证和校验信息见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+原生部署内置 sing-box 1.13.21，Docker 镜像内置 1.14.0；已有数据目录会保留用户当前内核。1.2.1 起管理程序还真正内置兼容 sing-box 的 MetaCubeXD 3.22.0，首次启动不需要再下载面板。第三方组件来源、许可证和校验信息见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 在线文档
 
