@@ -1,18 +1,18 @@
 {
-  "version": "1.2.3",
-  "notes": "默认 9090 控制面板改为离线内置 MetaCubeXD，与 123 已验证的面板一致；自动连接同端口 API，自定义面板和用户数据保留。",
+  "version": "1.2.4",
+  "notes": "可靠性更新：默认规则离线可用、配置应用失败自动恢复、设置并发隔离、敏感文件权限与下载校验加强；新增网关部署预检。",
   "assets": {
     "amd64": {
-      "sha256": "c9ebfc016dac6dd40fec96b693fcb41bcbfa67e542bbb01f472dc25313941d3e",
-      "size": 29397154
+      "sha256": "09ffd5c5a200722eb8efcea60ad4314c0913f19570942cc3a6d3106e32ab45c3",
+      "size": 29331618
     },
     "arm64": {
-      "sha256": "bd0a30c8b4eb34a56ae6a1c9679996f94c3618f421f04ca11727cf7dfb741ff4",
-      "size": 27787426
+      "sha256": "e859ffbb4c4e23c75957d8f04cef5e6b8c571a018a9d6da240440f4a740a26e4",
+      "size": 27656354
     },
     "arm": {
-      "sha256": "1c4eded65bb3cf34c4db05a2933cffc9eb4f127fa91d641fcd88cee7cff1afb3",
-      "size": 28639394
+      "sha256": "1ba48865b733eccdee812928de839fb3a9e9ff025228f0804f9d5ac836844f33",
+      "size": 28573858
     }
   }
 }

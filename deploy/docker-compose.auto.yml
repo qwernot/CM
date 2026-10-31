@@ -4,6 +4,8 @@ services:
     container_name: cmsingbox
     restart: unless-stopped
     privileged: true
+    sysctls:
+      net.ipv4.ip_forward: "1"
     environment:
       TZ: Asia/Shanghai
     volumes:

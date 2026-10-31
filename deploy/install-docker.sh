@@ -13,6 +13,9 @@ if [ -z "$container_ip" ]; then
   echo "必须设置 CMSINGBOX_IP，它应是局域网内、DHCP 地址池外的空闲 IP。" >&2
   exit 1
 fi
+if [ ! -c /dev/net/tun ]; then
+  echo "提醒：宿主机没有 /dev/net/tun，默认 TUN 可能无法启动；先检查内核支持，勿通过删除系统网络服务解决。" >&2
+fi
 if ! command -v curl >/dev/null 2>&1; then
   echo "缺少 curl，请先安装 curl。" >&2
   exit 1
